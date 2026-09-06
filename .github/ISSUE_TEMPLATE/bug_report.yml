@@ -1,0 +1,51 @@
+name: Bug report
+description: Something behaves differently from the specification
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste the text of a real episode into an issue. Describe the
+        shape of the data instead.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what the specification says should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: input
+    id: spec-section
+    attributes:
+      label: Specification section
+      description: Section number in CLAUDE.md, if the behaviour is described there.
+
+  - type: input
+    id: build
+    attributes:
+      label: Build and device
+      placeholder: development build, Pixel 8, Android 16
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: severity
+    attributes:
+      label: Does this touch a rule that is never broken?
+      options:
+        - label: Data left the device, or was written somewhere readable
+        - label: A prediction became editable
+        - label: Copy reassures, promises certainty, or names the app as therapy

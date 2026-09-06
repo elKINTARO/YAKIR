@@ -1,0 +1,10 @@
+# Default owner for everything in the repository.
+* @elKINTARO
+
+# The specification, the architectural records and the safety-critical surfaces
+# are called out separately so a review of them is never incidental.
+/CLAUDE.md @elKINTARO
+/docs/adr/ @elKINTARO
+/apps/mobile/src/domain/ @elKINTARO
+/apps/mobile/src/db/ @elKINTARO
+/.github/ @elKINTARO
