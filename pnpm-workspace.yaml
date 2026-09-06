@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+
+# React Native and Metro do not resolve symlinked dependencies reliably, so the
+# workspace uses a hoisted node_modules layout.
+nodeLinker: hoisted
+
+# Native resolver used by the eslint import plugin; needs its build step.
+allowBuilds:
+  unrs-resolver: true
