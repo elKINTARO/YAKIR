@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-surface: 247 245 241;
+    --color-raised: 255 254 252;
+    --color-line: 226 221 213;
+    --color-ink: 32 34 33;
+    --color-muted: 110 114 112;
+    --color-accent: 58 106 100;
+  }
+
+  .dark:root {
+    --color-surface: 18 20 19;
+    --color-raised: 28 31 30;
+    --color-line: 52 56 54;
+    --color-ink: 232 231 227;
+    --color-muted: 152 157 154;
+    --color-accent: 124 168 160;
+  }
+}

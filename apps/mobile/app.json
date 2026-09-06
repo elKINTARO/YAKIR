@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Yakir",
+    "slug": "yakir",
+    "scheme": "yakir",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yakir.app"
+    },
+    "android": {
+      "package": "com.yakir.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F5F1",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
