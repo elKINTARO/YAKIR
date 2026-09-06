@@ -10,7 +10,7 @@
     "prebuild": "expo prebuild --clean",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
     "expo": "~57.0.20",
