@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: typecheck, lint and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Formatting
+        run: pnpm format:check
+
+      - name: Types
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests and domain coverage gate
+        run: pnpm test
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: apps/mobile/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
+  bundle:
+    name: metro bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Catches dependency drift from the Expo SDK before it turns into a
+      # native build failure on a device.
+      - name: Dependency versions match the SDK
+        run: pnpm --filter @yakir/mobile exec expo install --check
+
+      # The application is never bundled in CI for release, only to prove that
+      # Metro, Babel and NativeWind still agree with each other.
+      - name: Bundle for android
+        run: >-
+          pnpm --filter @yakir/mobile exec expo export
+          --platform android --output-dir "$RUNNER_TEMP/export"
