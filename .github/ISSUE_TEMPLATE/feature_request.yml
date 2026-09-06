@@ -1,0 +1,43 @@
+name: Change request
+description: Propose a change to behaviour or scope
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Section 3 of CLAUDE.md lists what this project deliberately does not
+        build. Read it first: several obvious-sounding features are excluded on
+        purpose, because they feed the cycle the app exists to interrupt.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is harder than it should be today.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: The proposal
+    validations:
+      required: true
+
+  - type: textarea
+    id: anti-scope
+    attributes:
+      label: Why this is not in the anti-scope
+      description: >-
+        If it resembles anything in section 3, say what makes it different. If
+        it does not resemble anything there, say so.
+    validations:
+      required: true
+
+  - type: textarea
+    id: principles
+    attributes:
+      label: Effect on the product principles
+      description: >-
+        Section 2 lists eight principles that outrank convenience. Name any this
+        change pushes against.
