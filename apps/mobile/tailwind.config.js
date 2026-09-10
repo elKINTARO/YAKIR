@@ -11,9 +11,6 @@ module.exports = {
         ink: 'rgb(var(--color-ink) / <alpha-value>)',
         muted: 'rgb(var(--color-muted) / <alpha-value>)',
         accent: 'rgb(var(--color-accent) / <alpha-value>)',
-        // Intensity ramp for the 0..10 slider. Deliberately ends in a muted
-        // terracotta rather than a red: an alarm colour would prime the very
-        // state the app is trying to help the user observe calmly.
         intensity: {
           0: '#6E9490',
           1: '#7A9A8E',
@@ -29,13 +26,12 @@ module.exports = {
         },
       },
       fontSize: {
-        // The app is opened while anxious. Base type is larger than a typical
-        // app and line height is generous.
         base: ['17px', '26px'],
         lg: ['20px', '30px'],
         xl: ['24px', '32px'],
         '2xl': ['32px', '40px'],
         '3xl': ['44px', '52px'],
+        '4xl': ['64px', '68px'],
       },
     },
   },
