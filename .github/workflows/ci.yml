@@ -62,9 +62,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Catches dependency drift from the Expo SDK before it turns into a
+      # Surfaces dependency drift from the Expo SDK before it turns into a
       # native build failure on a device.
+      #
+      # Deliberately not a gate. The check compares against whatever Expo has
+      # published today, so a patch release makes it fail on a branch that
+      # changed nothing. A check that can go red on its own would train
+      # everyone to merge past a red tick, which costs more than the drift it
+      # reports. The bundle step below is the blocking one.
       - name: Dependency versions match the SDK
+        continue-on-error: true
         run: pnpm --filter @yakir/mobile exec expo install --check
 
       # The application is never bundled in CI for release, only to prove that
