@@ -53,6 +53,19 @@ module.exports = [
     },
   },
   {
+    files: ['app/**/*.tsx', 'src/**/*.tsx'],
+    rules: {
+      'react/jsx-no-literals': [
+        'error',
+        {
+          noStrings: true,
+          ignoreProps: true,
+          allowedStrings: ['%', '/', '·', '—', '–'],
+        },
+      ],
+    },
+  },
+  {
     files: ['app/**/*.ts', 'app/**/*.tsx'],
     rules: {
       'no-restricted-imports': [
