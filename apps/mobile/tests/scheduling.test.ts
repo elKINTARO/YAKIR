@@ -7,13 +7,13 @@ import {
   FOLLOWUP_DEADLINE_MS,
   isLateAnswer,
   isReminderExpired,
-  localMinuteOfDay,
   MAX_REMINDERS_PER_DAY,
   planReminders,
   shouldReschedule,
   SLOT_MS,
   type PendingFollowup,
 } from '@/domain/scheduling';
+import { localMinuteOfDay } from '@/domain/time';
 
 const KYIV = 180;
 const LA = -420;
