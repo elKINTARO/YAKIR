@@ -1,6 +1,11 @@
-const MINUTE_MS = 60_000;
-const DAY_MS = 24 * 60 * MINUTE_MS;
-const MINUTES_PER_DAY = 24 * 60;
+import {
+  DAY_MS,
+  MINUTE_MS,
+  MINUTES_PER_DAY,
+  startOfLocalDay,
+  toLocal,
+  toUtc,
+} from './time';
 
 export const FOLLOWUP_DELAY_MS = 24 * 60 * MINUTE_MS;
 
@@ -33,27 +38,6 @@ function assertWindow(window: ReminderWindow): void {
       `Invalid reminder window ${startMinute}..${endMinute}: it must be an increasing range inside one day.`,
     );
   }
-}
-
-function toLocal(utcMs: number, tzOffsetMinutes: number): number {
-  return utcMs + tzOffsetMinutes * MINUTE_MS;
-}
-
-function toUtc(localMs: number, tzOffsetMinutes: number): number {
-  return localMs - tzOffsetMinutes * MINUTE_MS;
-}
-
-/** Local midnight of the day the given local timestamp falls in. */
-function startOfLocalDay(localMs: number): number {
-  return Math.floor(localMs / DAY_MS) * DAY_MS;
-}
-
-export function localMinuteOfDay(
-  utcMs: number,
-  tzOffsetMinutes: number,
-): number {
-  const local = toLocal(utcMs, tzOffsetMinutes);
-  return Math.floor((local - startOfLocalDay(local)) / MINUTE_MS);
 }
 
 function clampLocalToWindow(localMs: number, window: ReminderWindow): number {
