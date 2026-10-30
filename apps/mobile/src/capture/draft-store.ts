@@ -15,6 +15,8 @@ export interface SavedEpisode {
   createdAt: number;
   tzOffset: number;
   followupAt: number;
+  /** Reminders are off and the one-time hint about it is due. */
+  remindersOff: boolean;
 }
 
 export interface DraftState extends Draft {

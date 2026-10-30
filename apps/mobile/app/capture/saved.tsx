@@ -13,8 +13,9 @@ const CONFIRMATION_MS = 2000;
 export default function SavedConfirmation() {
   const saved = useDraft((state) => state.saved);
   // Any touch keeps the screen open: two seconds is enough to read the line,
-  // not enough to reach for the exercise button with a shaking hand.
-  const [held, setHeld] = useState(false);
+  // not enough to reach for the exercise button with a shaking hand. The hint
+  // about disabled reminders is longer, so it holds the screen from the start.
+  const [held, setHeld] = useState(saved?.remindersOff ?? false);
 
   useEffect(() => {
     if (held || !saved) {
@@ -51,6 +52,11 @@ export default function SavedConfirmation() {
           <Text variant="question" accessibilityLiveRegion="polite">
             {message}
           </Text>
+          {saved.remindersOff ? (
+            <Text variant="muted" className="mt-6">
+              {t('notify.disabledHint')}
+            </Text>
+          ) : null}
         </View>
 
         <View className="flex-1 justify-end">
