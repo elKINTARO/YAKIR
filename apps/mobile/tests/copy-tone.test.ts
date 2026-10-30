@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { dictionaries, interpolate, LOCALES, t, uk } from '@/i18n';
 import { en } from '@/i18n/en';
+import { pluralCategory } from '@/i18n/plural';
 
 const REASSURANCE = [
   { pattern: /все буде добре/i, why: 'promises an outcome nobody knows' },
@@ -108,5 +109,41 @@ describe('t', () => {
 describe('the english dictionary', () => {
   it('is a complete implementation rather than a stub', () => {
     expect(Object.values(en).every((value) => value.length > 0)).toBe(true);
+  });
+});
+
+describe('pluralCategory', () => {
+  it.each([
+    [1, 'one'],
+    [21, 'one'],
+    [101, 'one'],
+    [2, 'few'],
+    [4, 'few'],
+    [22, 'few'],
+    [5, 'many'],
+    [11, 'many'],
+    [12, 'many'],
+    [14, 'many'],
+    [111, 'many'],
+    [0, 'many'],
+  ] as const)('puts %i in the ukrainian "%s" form', (count, category) => {
+    expect(pluralCategory('uk', count)).toBe(category);
+  });
+
+  it('has only one and many in english', () => {
+    expect(pluralCategory('en', 1)).toBe('one');
+    expect(pluralCategory('en', 3)).toBe('many');
+  });
+
+  it('reads the summary naturally for every form', () => {
+    expect(t(`notify.summary.${pluralCategory('uk', 1)}`, { count: 1 })).toBe(
+      'Є 1 прогноз для перевірки',
+    );
+    expect(t(`notify.summary.${pluralCategory('uk', 3)}`, { count: 3 })).toBe(
+      'Є 3 прогнози для перевірки',
+    );
+    expect(t(`notify.summary.${pluralCategory('uk', 5)}`, { count: 5 })).toBe(
+      'Є 5 прогнозів для перевірки',
+    );
   });
 });

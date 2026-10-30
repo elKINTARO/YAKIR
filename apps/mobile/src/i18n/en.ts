@@ -33,6 +33,15 @@ export const en: Dictionary = {
 
   'exercises.title': 'Exercises',
 
+  'notify.channel': 'Prediction checks',
+  'notify.followup.title': 'Time to check a prediction',
+  'notify.followup.body': 'What actually happened?',
+  'notify.summary.one': 'There is {count} prediction to check',
+  'notify.summary.few': 'There are {count} predictions to check',
+  'notify.summary.many': 'There are {count} predictions to check',
+  'notify.disabledHint':
+    'Reminders are off. The check will still wait on the home screen.',
+
   'followup.stated': 'You put it at {probability}%',
   'followup.question': 'What happened?',
   'followup.outcome.didNotHappen': 'Did not happen',
