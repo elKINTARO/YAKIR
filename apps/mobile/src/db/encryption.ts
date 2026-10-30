@@ -6,10 +6,19 @@ const PLAINTEXT_MAGIC = 'SQLite format 3\0';
 
 export type EncryptionCheck = 'encrypted' | 'plaintext' | 'absent';
 
+/** iOS reports the directory as a file:// URI, Android as a bare path, and
+ * File accepts only the former. */
+function toFileUri(directory: string): string {
+  return directory.startsWith('file://') ? directory : `file://${directory}`;
+}
+
 export async function checkDatabaseEncryption(
   databaseName: string,
 ): Promise<EncryptionCheck> {
-  const file = new File(String(SQLite.defaultDatabaseDirectory), databaseName);
+  const file = new File(
+    toFileUri(String(SQLite.defaultDatabaseDirectory)),
+    databaseName,
+  );
   if (!file.exists) {
     return 'absent';
   }
