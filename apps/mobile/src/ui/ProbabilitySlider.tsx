@@ -12,7 +12,9 @@ const MAX = 100;
 const STEP = 5;
 
 export interface ProbabilitySliderProps {
-  value: number;
+  /** Null until the person touches the scale: a preset value would anchor
+   * the answer. */
+  value: number | null;
   onChange: (value: number) => void;
   accessibilityLabel: string;
 }
@@ -55,8 +57,8 @@ export function ProbabilitySlider({
     [setFromPosition],
   );
 
-  const fillRatio = ratioFromValue(value, MIN, MAX);
-  const label = `${value}%`;
+  const fillRatio = value === null ? 0 : ratioFromValue(value, MIN, MAX);
+  const label = value === null ? '—' : `${value}%`;
 
   return (
     <View className="w-full items-center">
@@ -68,7 +70,11 @@ export function ProbabilitySlider({
         <View
           accessibilityRole="adjustable"
           accessibilityLabel={accessibilityLabel}
-          accessibilityValue={{ min: MIN, max: MAX, now: value }}
+          accessibilityValue={
+            value === null
+              ? { min: MIN, max: MAX }
+              : { min: MIN, max: MAX, now: value }
+          }
           onLayout={onLayout}
           className="mt-8 h-16 w-full justify-center overflow-hidden rounded-3xl border border-line bg-raised"
         >
