@@ -30,32 +30,41 @@ export function ProbabilitySlider({
     setWidth(event.nativeEvent.layout.width);
   }, []);
 
-  const setFromPosition = useCallback(
-    (x: number) => {
+  // The gesture must not depend on `value`. Rebuilding it on every notch made
+  // the detector reattach mid-drag and drop the tail of the movement, so the
+  // last emitted value lives in the gesture's own closure instead.
+  const pan = useMemo(() => {
+    const drag: { last: number | null } = { last: null };
+
+    const setFromPosition = (x: number) => {
       const ratio = width === 0 ? 0 : x / width;
       const next = valueFromRatio(ratio, MIN, MAX, STEP);
-      if (next === value) {
+      if (next === drag.last) {
         return;
       }
+      drag.last = next;
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       onChange(next);
-    },
-    [width, onChange, value],
-  );
+    };
 
-  const pan = useMemo(
-    () =>
+    return (
       Gesture.Pan()
         .runOnJS(true)
         .minDistance(0)
         .onBegin((event) => {
+          drag.last = null;
           setFromPosition(event.x);
         })
         .onUpdate((event) => {
           setFromPosition(event.x);
-        }),
-    [setFromPosition],
-  );
+        })
+        // Where the finger lifts is the answer, even if no move was reported
+        // after the last update.
+        .onEnd((event) => {
+          setFromPosition(event.x);
+        })
+    );
+  }, [width, onChange]);
 
   const fillRatio = value === null ? 0 : ratioFromValue(value, MIN, MAX);
   const label = value === null ? '—' : `${value}%`;

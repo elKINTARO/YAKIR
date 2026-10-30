@@ -30,32 +30,41 @@ export function IntensitySlider({
     setHeight(event.nativeEvent.layout.height);
   }, []);
 
-  const setFromPosition = useCallback(
-    (y: number) => {
+  // The gesture must not depend on `value`. Rebuilding it on every notch made
+  // the detector reattach mid-drag and drop the tail of the movement, so the
+  // last emitted value lives in the gesture's own closure instead.
+  const pan = useMemo(() => {
+    const drag: { last: number | null } = { last: null };
+
+    const setFromPosition = (y: number) => {
       const ratio = height === 0 ? 0 : 1 - y / height;
       const next = valueFromRatio(ratio, MIN, MAX, STEP);
-      if (next === value) {
+      if (next === drag.last) {
         return;
       }
+      drag.last = next;
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       onChange(next);
-    },
-    [height, onChange, value],
-  );
+    };
 
-  const pan = useMemo(
-    () =>
+    return (
       Gesture.Pan()
         .runOnJS(true)
         .minDistance(0)
         .onBegin((event) => {
+          drag.last = null;
           setFromPosition(event.y);
         })
         .onUpdate((event) => {
           setFromPosition(event.y);
-        }),
-    [setFromPosition],
-  );
+        })
+        // Where the finger lifts is the answer, even if no move was reported
+        // after the last update.
+        .onEnd((event) => {
+          setFromPosition(event.y);
+        })
+    );
+  }, [height, onChange]);
 
   const fillRatio = value === null ? 0 : ratioFromValue(value, MIN, MAX);
 
