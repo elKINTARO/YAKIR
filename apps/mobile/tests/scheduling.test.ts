@@ -9,7 +9,7 @@ import {
   isReminderExpired,
   MAX_REMINDERS_PER_DAY,
   planReminders,
-  shouldReschedule,
+  planUpcomingReminders,
   SLOT_MS,
   type PendingFollowup,
 } from '@/domain/scheduling';
@@ -280,17 +280,62 @@ describe('isLateAnswer', () => {
   });
 });
 
-describe('shouldReschedule', () => {
-  it('is true on the first run, when nothing is known yet', () => {
-    expect(shouldReschedule(null, KYIV)).toBe(true);
+describe('planReminders after a timezone change', () => {
+  it('pulls a follow-up back into the window of the current zone', () => {
+    // Due at 14:00 in Kyiv, which is 04:00 in Los Angeles.
+    const followupAt = localTime(101, 14, 0, KYIV);
+    const [reminder] = planReminders([{ episodeId: 'a', followupAt }], LA);
+    expect(reminder?.at).toBe(localTime(101, 10, 0, LA));
+    expect(localHourMinute(reminder?.at ?? 0, LA)).toBe('10:00');
   });
 
-  it('is true after crossing into another zone', () => {
-    expect(shouldReschedule(KYIV, LA)).toBe(true);
+  it('leaves a follow-up alone when the zone has not changed', () => {
+    const followupAt = localTime(101, 14, 0, KYIV);
+    const [reminder] = planReminders([{ episodeId: 'a', followupAt }], KYIV);
+    expect(reminder?.at).toBe(followupAt);
+  });
+});
+
+describe('planUpcomingReminders', () => {
+  const day = 101;
+  const due = (hour: number): PendingFollowup => ({
+    episodeId: `at-${hour}`,
+    followupAt: localTime(day, hour, 0, KYIV),
   });
 
-  it('is false while the zone is unchanged', () => {
-    expect(shouldReschedule(KYIV, KYIV)).toBe(false);
+  it('schedules only reminders that are still ahead', () => {
+    const now = localTime(day, 13, 0, KYIV);
+    const planned = planUpcomingReminders([due(11), due(15)], now, KYIV);
+    expect(
+      planned.map(
+        (reminder) => reminder.kind === 'individual' && reminder.episodeId,
+      ),
+    ).toEqual(['at-15']);
+  });
+
+  it('drops expired follow-ups from planning altogether', () => {
+    const now = localTime(day, 11, 0, KYIV) + FOLLOWUP_DEADLINE_MS + 1;
+    expect(planUpcomingReminders([due(11)], now, KYIV)).toEqual([]);
+  });
+
+  it('keeps the plan stable when a due reminder has already fired', () => {
+    // Four on one day: three individual, the fourth folds into a summary.
+    // Once the first has fired, the summary must not turn into a fourth
+    // individual reminder just because the first one left the list.
+    const pending = [due(11), due(12), due(13), due(14)];
+    const before = planUpcomingReminders(
+      pending,
+      localTime(day, 9, 0, KYIV),
+      KYIV,
+    );
+    const after = planUpcomingReminders(
+      pending,
+      localTime(day, 11, 30, KYIV),
+      KYIV,
+    );
+
+    expect(after).toEqual(before.slice(1));
+    expect(after.at(-1)).toMatchObject({ kind: 'summary', count: 1 });
   });
 });
 
