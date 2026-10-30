@@ -8,7 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "prebuild": "expo prebuild --clean",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tests",
     "lint": "eslint .",
     "test": "vitest run --coverage --passWithNoTests"
   },
@@ -27,7 +27,7 @@
     "expo-screen-capture": "~57.0.2",
     "expo-secure-store": "~57.0.3",
     "expo-sharing": "~57.0.18",
-    "expo-speech-recognition": "^57.0.0",
+    "expo-speech-recognition": "57.0.0",
     "expo-splash-screen": "~57.0.8",
     "expo-sqlite": "~57.0.2",
     "expo-status-bar": "~57.0.1",
@@ -43,6 +43,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "@types/react": "~19.2.2",
     "@vitest/coverage-v8": "^5.0.0",
     "eslint": "^9.39.5",
