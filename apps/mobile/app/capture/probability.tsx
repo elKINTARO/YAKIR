@@ -24,7 +24,10 @@ export default function ProbabilityStep() {
       const saved = await saveDraft(draftStore.getState());
       draftStore.getState().complete(saved);
       router.replace('/capture/saved');
-    } catch {
+    } catch (error) {
+      if (__DEV__) {
+        console.warn('Saving the episode failed', error);
+      }
       setFailed(true);
       setSaving(false);
     }
