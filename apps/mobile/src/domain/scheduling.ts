@@ -118,7 +118,13 @@ export function planReminders(
   const byDay = new Map<number, IndividualReminder[]>();
 
   for (const item of ordered) {
-    const at = findFreeSlot(item.followupAt, taken, tzOffsetMinutes, window);
+    // Clamped again in the current timezone: a follow-up planned for 14:00 in
+    // Kyiv must not ring at 04:00 after a flight to Los Angeles.
+    const candidate = toUtc(
+      clampLocalToWindow(toLocal(item.followupAt, tzOffsetMinutes), window),
+      tzOffsetMinutes,
+    );
+    const at = findFreeSlot(candidate, taken, tzOffsetMinutes, window);
     taken.push(at);
 
     const day = startOfLocalDay(toLocal(at, tzOffsetMinutes));
@@ -162,9 +168,22 @@ export function isLateAnswer(
   return completedAt > scheduledAt + FOLLOWUP_DEADLINE_MS;
 }
 
-export function shouldReschedule(
-  previousTzOffsetMinutes: number | null,
-  currentTzOffsetMinutes: number,
-): boolean {
-  return previousTzOffsetMinutes !== currentTzOffsetMinutes;
+/**
+ * What should actually be scheduled now. Expired follow-ups are left out for
+ * good. Due ones still take part in planning so that their slots and the daily
+ * cap stay where they were, which keeps the plan stable from one sync to the
+ * next; only reminders still in the future are returned.
+ */
+export function planUpcomingReminders(
+  pending: readonly PendingFollowup[],
+  now: number,
+  tzOffsetMinutes: number,
+  window: ReminderWindow = DEFAULT_REMINDER_WINDOW,
+): PlannedReminder[] {
+  const live = pending.filter(
+    (item) => !isReminderExpired(item.followupAt, now),
+  );
+  return planReminders(live, tzOffsetMinutes, window).filter(
+    (reminder) => reminder.at > now,
+  );
 }

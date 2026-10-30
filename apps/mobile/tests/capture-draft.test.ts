@@ -8,6 +8,7 @@ const SAVED: SavedEpisode = {
   createdAt: 1,
   tzOffset: 180,
   followupAt: 2,
+  remindersOff: false,
 };
 
 function filledStore() {

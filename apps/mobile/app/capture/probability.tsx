@@ -6,9 +6,24 @@ import { CaptureStep } from '@/capture/CaptureStep';
 import { draftStore } from '@/capture/draft-store';
 import { saveDraft } from '@/capture/save';
 import { useDraft } from '@/capture/use-draft';
+import { prepareRemindersAfterSave } from '@/notifications/scheduler';
 import { isComplete } from '@/domain/capture';
 import { t } from '@/i18n';
 import { ProbabilitySlider, Text } from '@/ui';
+
+// The episode is already stored by the time this runs. A reminder that fails
+// to schedule must not be reported as a failed save: the home screen card
+// works without it.
+async function prepareReminders(): Promise<boolean> {
+  try {
+    return await prepareRemindersAfterSave();
+  } catch (error) {
+    if (__DEV__) {
+      console.warn('Preparing reminders failed', error);
+    }
+    return false;
+  }
+}
 
 export default function ProbabilityStep() {
   const probability = useDraft((state) => state.probability);
@@ -22,7 +37,8 @@ export default function ProbabilityStep() {
     setFailed(false);
     try {
       const saved = await saveDraft(draftStore.getState());
-      draftStore.getState().complete(saved);
+      const remindersOff = await prepareReminders();
+      draftStore.getState().complete({ ...saved, remindersOff });
       router.replace('/capture/saved');
     } catch (error) {
       if (__DEV__) {

@@ -29,6 +29,15 @@ export const uk = {
 
   'exercises.title': 'Вправи',
 
+  'notify.channel': 'Перевірка прогнозів',
+  'notify.followup.title': 'Час перевірити прогноз',
+  'notify.followup.body': 'Що сталося насправді?',
+  'notify.summary.one': 'Є {count} прогноз для перевірки',
+  'notify.summary.few': 'Є {count} прогнози для перевірки',
+  'notify.summary.many': 'Є {count} прогнозів для перевірки',
+  'notify.disabledHint':
+    'Нагадування вимкнені. Перевірка однаково чекатиме на головному екрані.',
+
   'followup.stated': 'Ти оцінював це у {probability}%',
   'followup.question': 'Що сталося?',
   'followup.outcome.didNotHappen': 'Не сталося',
