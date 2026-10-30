@@ -12,16 +12,26 @@ export const en: Dictionary = {
   'home.pendingTitle': 'Yesterday you predicted',
   'home.pendingAction': 'Check',
 
+  'capture.step': 'Step {current} of {total}',
+  'capture.scale.untouched': 'Touch the scale',
   'capture.intensity.question': 'How strong is it right now?',
   'capture.fear.question': 'What exactly are you afraid will happen?',
   'capture.fear.placeholder':
     'Not "I feel anxious", but what is supposed to happen. For example: "at the meeting they will say I cannot handle the project"',
   'capture.fear.hint': 'That reads as a state. What is supposed to happen?',
   'capture.fear.dictate': 'Dictate',
+  'capture.fear.stopDictation': 'Stop',
+  'capture.fear.tags': 'Topic, if you like',
   'capture.probability.question':
     'How much do you believe right now that it will happen?',
-  'capture.saved': 'Recorded. Tomorrow at {time} we will check what happened.',
+  'capture.saveFailed': 'Could not save. Try again.',
+  'capture.saved.tomorrow':
+    'Recorded. Tomorrow at {time} we will check what happened.',
+  'capture.saved.dayAfterTomorrow':
+    'Recorded. The day after tomorrow at {time} we will check what happened.',
   'capture.exerciseNow': 'An exercise now',
+
+  'exercises.title': 'Exercises',
 
   'followup.stated': 'You put it at {probability}%',
   'followup.question': 'What happened?',

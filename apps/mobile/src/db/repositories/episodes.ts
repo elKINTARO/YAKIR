@@ -1,10 +1,10 @@
-import type { Episode, EpisodeId } from '@/domain/types';
+import type { Episode, EpisodeId, NewEpisode } from '@/domain/types';
 
 import { getDatabase } from '../client';
 import { newId } from '../ids';
 import { serializeTags, toEpisode, type EpisodeRow } from '../rows';
 
-export type NewEpisode = Omit<Episode, 'id' | 'notificationId'>;
+export type { NewEpisode };
 
 const SELECT = `
   SELECT id, created_at, tz_offset, intensity, fear, probability,

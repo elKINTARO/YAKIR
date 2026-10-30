@@ -27,6 +27,24 @@ export interface Episode {
   notificationId: string | null;
 }
 
+/** An episode as it is about to be stored: everything except the identifiers
+ * the storage layer assigns. */
+export type NewEpisode = Omit<Episode, 'id' | 'notificationId'>;
+
+/** Stored as these stable identifiers, never as translated labels, so that a
+ * change of interface language does not split the statistics in two. */
+export const TAG_IDS = [
+  'work',
+  'health',
+  'relationships',
+  'money',
+  'social',
+  'future',
+  'other',
+] as const;
+
+export type TagId = (typeof TAG_IDS)[number];
+
 export const OUTCOME = {
   didNotHappen: 0,
   partly: 1,
