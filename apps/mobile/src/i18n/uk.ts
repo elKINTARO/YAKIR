@@ -52,6 +52,15 @@ export const uk = {
   'followup.reflection.asHardAsFeared':
     'Сталося, і було справді важко. Ти це пережив.',
 
+  'followup.recordedOn': '{date} о {time}',
+  'followup.optional': 'Необовʼязково',
+  'followup.saveFailed': 'Не вдалося зберегти. Спробуй ще раз.',
+  'followup.late':
+    'Відповідь пізніша за 48 годин, тому в калібрування вона не входить: за цей час памʼять уже змінює подробиці. У календарі вона лишається.',
+  'followup.reflection.partlyLighter':
+    'Сталося частково, і за твоєю оцінкою це виявилось легше ({impact}/10), ніж відчувалося тоді ({intensity}/10).',
+  'followup.reflection.partlyAsHard': 'Сталося частково, і було справді важко.',
+
   'stats.calibration.title': 'Твої прогнози',
   'stats.calibration.meanProbability': 'Середня заявлена впевненість',
   'stats.calibration.fully': 'Справдилось повністю',

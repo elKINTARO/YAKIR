@@ -3,12 +3,14 @@ import { Platform } from 'react-native';
 
 import {
   listEpisodesAwaitingFollowup,
+  listFollowupsForPlanning,
   setEpisodeNotificationId,
 } from '@/db/repositories/episodes';
 import { getSetting, setSetting } from '@/db/repositories/settings';
 import { tzOffsetFromPlatform } from '@/domain/capture';
 import type { Episode } from '@/domain/types';
 import {
+  FOLLOWUP_DEADLINE_MS,
   isReminderExpired,
   planUpcomingReminders,
   type PlannedReminder,
@@ -97,10 +99,7 @@ async function runSync(now: number): Promise<void> {
 
   const plan = permitted
     ? planUpcomingReminders(
-        pending.map((episode) => ({
-          episodeId: episode.id,
-          followupAt: episode.followupAt,
-        })),
+        await listFollowupsForPlanning(now - FOLLOWUP_DEADLINE_MS),
         now,
         currentTzOffset(now),
       )

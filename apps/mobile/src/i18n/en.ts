@@ -50,11 +50,21 @@ export const en: Dictionary = {
   'followup.impact.question': 'How bad did it actually turn out?',
   'followup.helped.question': 'What helped you then?',
   'followup.reflection.didNotHappen':
-    'The prediction did not come true. That is the {ordinal} such case out of {total}.',
+    'The prediction did not come true. That makes {ordinal} such cases out of {total}.',
   'followup.reflection.lighterThanFeared':
     'It happened, but by your own account it turned out lighter ({impact}/10) than it felt at the time ({intensity}/10).',
   'followup.reflection.asHardAsFeared':
     'It happened, and it was genuinely hard. You got through it.',
+
+  'followup.recordedOn': '{date} at {time}',
+  'followup.optional': 'Optional',
+  'followup.saveFailed': 'Could not save. Try again.',
+  'followup.late':
+    'This answer came more than 48 hours later, so it is left out of the calibration: by then memory has already reshaped the details. It stays in the calendar.',
+  'followup.reflection.partlyLighter':
+    'It partly happened, and by your own rating it turned out lighter ({impact}/10) than it felt then ({intensity}/10).',
+  'followup.reflection.partlyAsHard':
+    'It partly happened, and it was genuinely hard.',
 
   'stats.calibration.title': 'Your predictions',
   'stats.calibration.meanProbability': 'Average stated confidence',

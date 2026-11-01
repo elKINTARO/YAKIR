@@ -104,3 +104,37 @@ export async function countEpisodes(): Promise<number> {
   );
   return row?.total ?? 0;
 }
+
+export interface PlanningEntry {
+  episodeId: EpisodeId;
+  followupAt: number;
+  answered: boolean;
+}
+
+/**
+ * Every follow-up due after `dueAfter`, answered or not. Answered ones keep
+ * their reminder slots taken so that the plan does not shift when one of them
+ * is answered.
+ */
+export async function listFollowupsForPlanning(
+  dueAfter: number,
+): Promise<PlanningEntry[]> {
+  const database = await getDatabase();
+  const rows = await database.getAllAsync<{
+    id: string;
+    followup_at: number;
+    answered: number;
+  }>(
+    `SELECT e.id, e.followup_at, f.episode_id IS NOT NULL AS answered
+     FROM episodes e
+     LEFT JOIN followups f ON f.episode_id = e.id
+     WHERE e.followup_at > ?
+     ORDER BY e.followup_at ASC`,
+    [dueAfter],
+  );
+  return rows.map((row) => ({
+    episodeId: row.id,
+    followupAt: row.followup_at,
+    answered: row.answered === 1,
+  }));
+}

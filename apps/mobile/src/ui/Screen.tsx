@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface ScreenProps {
-  children: ReactNode;
+  children?: ReactNode;
   scroll?: boolean;
   edgeToEdgeBottom?: boolean;
   className?: string;
