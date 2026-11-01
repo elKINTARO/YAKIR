@@ -49,7 +49,10 @@ export function Button({
         .join(' ')}
       {...rest}
     >
-      <Text variant={large ? 'question' : 'body'} className={styles.label}>
+      <Text
+        variant={large ? 'question' : 'body'}
+        className={`text-center ${styles.label}`}
+      >
         {label}
       </Text>
     </Pressable>
