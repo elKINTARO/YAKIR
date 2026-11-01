@@ -339,6 +339,67 @@ describe('planUpcomingReminders', () => {
   });
 });
 
+describe('planUpcomingReminders with answered follow-ups', () => {
+  const day = 101;
+  const at = (hour: number, minute: number) =>
+    localTime(day, hour, minute, KYIV);
+
+  it('keeps a postponed reminder in its later slot after the earlier one is answered', () => {
+    // Found on a device: A and B share the 15:00 slot, so B moves to 15:30.
+    // Answering A at 15:15 must not pull B back to 15:05, which is already
+    // in the past, because then B is never shown at all.
+    const a = { episodeId: 'a', followupAt: at(15, 0) };
+    const b = { episodeId: 'b', followupAt: at(15, 5) };
+    const before = planUpcomingReminders([a, b], at(14, 0), KYIV);
+    expect(before.at(-1)).toMatchObject({
+      episodeId: 'b',
+      at: at(15, 35),
+    });
+
+    const after = planUpcomingReminders(
+      [{ ...a, answered: true }, b],
+      at(15, 15),
+      KYIV,
+    );
+    expect(after).toEqual([
+      { kind: 'individual', episodeId: 'b', at: at(15, 35) },
+    ]);
+  });
+
+  it('never schedules a reminder for an answered follow-up', () => {
+    const answered = { episodeId: 'a', followupAt: at(16, 0), answered: true };
+    expect(planUpcomingReminders([answered], at(14, 0), KYIV)).toEqual([]);
+  });
+
+  it('counts only open follow-ups in the summary', () => {
+    const followups = ['a', 'b', 'c', 'd', 'e'].map((id, index) => ({
+      episodeId: id,
+      followupAt: at(11 + index, 0),
+      answered: id === 'd',
+    }));
+    const planned = planUpcomingReminders(followups, at(9, 0), KYIV);
+    expect(planned.at(-1)).toMatchObject({
+      kind: 'summary',
+      count: 1,
+      episodeIds: ['e'],
+    });
+  });
+
+  it('drops the summary when everything in it is answered', () => {
+    const followups = ['a', 'b', 'c', 'd'].map((id, index) => ({
+      episodeId: id,
+      followupAt: at(11 + index, 0),
+      answered: id === 'd',
+    }));
+    const planned = planUpcomingReminders(followups, at(9, 0), KYIV);
+    expect(planned.map((reminder) => reminder.kind)).toEqual([
+      'individual',
+      'individual',
+      'individual',
+    ]);
+  });
+});
+
 describe('the default window', () => {
   it('is the ten to twenty hours the specification names', () => {
     expect(DEFAULT_REMINDER_WINDOW).toEqual({

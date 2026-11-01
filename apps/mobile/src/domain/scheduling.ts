@@ -89,6 +89,9 @@ export function findFreeSlot(
 export interface PendingFollowup {
   episodeId: string;
   followupAt: number;
+  /** Answered already. Still planned, so that its slot stays taken, but never
+   * scheduled. See planUpcomingReminders. */
+  answered?: boolean;
 }
 
 export interface IndividualReminder {
@@ -169,21 +172,38 @@ export function isLateAnswer(
 }
 
 /**
- * What should actually be scheduled now. Expired follow-ups are left out for
- * good. Due ones still take part in planning so that their slots and the daily
- * cap stay where they were, which keeps the plan stable from one sync to the
- * next; only reminders still in the future are returned.
+ * What should actually be scheduled now. The plan must stay stable from one
+ * sync to the next, otherwise a reminder that was moved to a later slot can
+ * fall back into a slot that is already in the past and be lost. So everything
+ * not yet expired takes part in planning, including follow-ups that are due
+ * and ones already answered; only unanswered reminders still in the future are
+ * returned.
  */
 export function planUpcomingReminders(
-  pending: readonly PendingFollowup[],
+  followups: readonly PendingFollowup[],
   now: number,
   tzOffsetMinutes: number,
   window: ReminderWindow = DEFAULT_REMINDER_WINDOW,
 ): PlannedReminder[] {
-  const live = pending.filter(
+  const live = followups.filter(
     (item) => !isReminderExpired(item.followupAt, now),
   );
-  return planReminders(live, tzOffsetMinutes, window).filter(
-    (reminder) => reminder.at > now,
+  const answered = new Set(
+    live.filter((item) => item.answered).map((item) => item.episodeId),
+  );
+
+  return planReminders(live, tzOffsetMinutes, window).flatMap(
+    (reminder): PlannedReminder[] => {
+      if (reminder.at <= now) {
+        return [];
+      }
+      if (reminder.kind === 'individual') {
+        return answered.has(reminder.episodeId) ? [] : [reminder];
+      }
+      const open = reminder.episodeIds.filter((id) => !answered.has(id));
+      return open.length === 0
+        ? []
+        : [{ ...reminder, count: open.length, episodeIds: open }];
+    },
   );
 }
