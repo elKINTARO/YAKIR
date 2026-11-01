@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createDraftStore, type SavedEpisode } from '@/capture/draft-store';
-import { formatClock } from '@/i18n/format';
+import { formatClock, formatDayMonth } from '@/i18n/format';
 
 const SAVED: SavedEpisode = {
   episodeId: 'episode-1',
@@ -80,5 +80,19 @@ describe('formatClock', () => {
 
   it('pads hours and minutes', () => {
     expect(formatClock(5 * MINUTE, 0)).toBe('00:05');
+  });
+});
+
+describe('formatDayMonth', () => {
+  // 2026-10-30 21:30 UTC is already 31 October in Kyiv.
+  const lateEvening = Date.UTC(2026, 9, 30, 21, 30);
+
+  it('uses the local date of the offset, not the UTC one', () => {
+    expect(formatDayMonth(lateEvening, 0, 'uk')).toBe('30 жовтня');
+    expect(formatDayMonth(lateEvening, 180, 'uk')).toBe('31 жовтня');
+  });
+
+  it('puts the month first in english', () => {
+    expect(formatDayMonth(lateEvening, 0, 'en')).toBe('October 30');
   });
 });
